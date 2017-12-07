@@ -39,22 +39,22 @@ class ViewController: UIViewController {
         view.addSubview(segmentedControl1)
         
         /// example - 2
-        let frame2 = CGRect(x: 0, y: 120, width: width, height: 20)
-        let titles2 = ["one","two","three","four","five","six","seven","eight","nine","ten"]
+        let frame2 = CGRect(x: 0, y: 120, width: width, height: 40)
+        let titles2 = ["oneone","two","three","four","five","six","seven","eight","nine","ten"]
         let images2 = [#imageLiteral(resourceName: "p1"),#imageLiteral(resourceName: "p2"),#imageLiteral(resourceName: "p3"),#imageLiteral(resourceName: "p4"),#imageLiteral(resourceName: "p5"),#imageLiteral(resourceName: "p6"),#imageLiteral(resourceName: "p7"),#imageLiteral(resourceName: "p8"),#imageLiteral(resourceName: "p1")]
-        let segmentedControl2 = ZSegmentedControl(frame: frame2, hybridSources: (titles2, images2), widthStyle: .customizeWithWidth(80))
+        let segmentedControl2 = ZSegmentedControl(frame: frame2, hybridSources: (titles2, images2), itemWidth: 80)
         segmentedControl2.backgroundColor = UIColor.purple
         segmentedControl2.assistColor = UIColor.blue
         segmentedControl2.assistStyle = .bottom(5)
         segmentedControl2.delegate = self
-        segmentedControl2.hybridType = .normalWithSpace(80)
+        segmentedControl2.hybridType = .imageRightWithSpace(5)
         view.addSubview(segmentedControl2)
         
         /// example - 3
         let frame3 = CGRect(x: 0, y: 180, width: width, height: 60)
         let titles3 = ["one","two","three","four","five","six","seven","eight","nine","ten"]
         let images3 = [#imageLiteral(resourceName: "p1"),#imageLiteral(resourceName: "p2"),#imageLiteral(resourceName: "p3"),#imageLiteral(resourceName: "p4"),#imageLiteral(resourceName: "p5"),#imageLiteral(resourceName: "p6"),#imageLiteral(resourceName: "p7"),#imageLiteral(resourceName: "p8"),#imageLiteral(resourceName: "p1"),#imageLiteral(resourceName: "p1"),#imageLiteral(resourceName: "p1")]
-        let segmentedControl3 = ZSegmentedControl(frame: frame3, hybridSources: (titles3, images3), widthStyle: .customizeWithWidth(80))
+        let segmentedControl3 = ZSegmentedControl(frame: frame3, hybridSources: (titles3, images3), itemWidth: 80)
         segmentedControl3.backgroundColor = UIColor.purple
         segmentedControl3.assistColor = UIColor.blue
         segmentedControl3.assistStyle = .bottom(5)

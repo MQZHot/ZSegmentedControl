@@ -72,10 +72,10 @@ class ZSegmentedControl: UIView {
         setupItems()
     }
     
-    public init (frame: CGRect, hybridSources: ([String?], [UIImage?]), widthStyle: ZSegmentedControlWidthStyle) {
+    public init (frame: CGRect, hybridSources: ([String?], [UIImage?]), itemWidth: CGFloat) {
         super.init (frame: frame)
         typeStyle = .hybrid
-        self.widthStyle = widthStyle
+        imageStyleWidth = itemWidth
         self.hybridSources = hybridSources
         itemsCount = max(hybridSources.0.count, hybridSources.1.count)
         setupItems()
@@ -120,7 +120,7 @@ class ZSegmentedControl: UIView {
         for i in 0..<itemsCount {
             let button = UIButton(type: .custom)
             button.tag = i
-//            button.clipsToBounds = true
+            button.clipsToBounds = true
             button.addTarget(self, action: #selector(segmentedSelectedIndex), for: .touchUpInside)
             scrollView.addSubview(button)
             buttonArray.append(button)
@@ -179,69 +179,52 @@ class ZSegmentedControl: UIView {
                 if index < images.count { image = images[index]! }
                 if index < titles.count { text = titles[index]! }
                 
-                
-                
-                if !widthStyle.sizeToFit {
-                    let width = widthStyle.width/// 设定的宽度
-                    button.frame = CGRect(x: CGFloat(index)*width, y: 0, width: width, height: frame.size.height)
-                    switch hybridType {
-                    case .normalWithSpace(let space):
-                        var distance = space/2
-                        if text == nil || image == nil { distance = 0 }
-                        guard image != nil else { break }
-                        var maxWidth = image!.size.width
-                        if text != nil && text != "" { maxWidth = width/2 }
-                        image = constraintImageSize(image: image!, maxWidth: maxWidth, maxHeight: frame.size.height)
-                        button.imageEdgeInsets = UIEdgeInsetsMake(0, -distance, 0, distance)
-                        button.titleEdgeInsets = UIEdgeInsetsMake(0, distance, 0, -distance)
-                    case .imageRightWithSpace(let space):
-                        var distance = space/2
-                        if text == nil || image == nil { distance = 0 }
-                        guard image != nil else { break }
-                        var titleWidth = text?.size(withAttributes: [.font: textFont]).width ?? 0
-                        titleWidth = min(width, titleWidth)
-                        var maxWidth = image!.size.width
-                        if text != nil && text != "" { maxWidth = width/2 }
-                        image = constraintImageSize(image: image!, maxWidth: maxWidth, maxHeight: frame.size.height)
-                        button.imageEdgeInsets = UIEdgeInsetsMake(0, titleWidth+distance, 0, -titleWidth-distance)
-                        button.titleEdgeInsets = UIEdgeInsetsMake(0, -image!.size.width-distance, 0, image!.size.width+distance)
-                        
-                    case .imageBottomWithSpace(let space):
-                        var distance = space/2
-                        if text == nil || image == nil { distance = 0 }
-                        guard image != nil else { break }
-                        let titleWidth = button.titleLabel?.frame.size.width ?? 0
-                        let titleHeight = button.titleLabel?.frame.size.height ?? 0
-                        let maxWidth = width
-                        let maxHeight = frame.size.height-space-titleHeight
-                        image = constraintImageSize(image: image!, maxWidth: maxWidth, maxHeight: maxHeight)
-                        
-                        button.imageEdgeInsets = UIEdgeInsetsMake(0, 0, -titleHeight-distance, -titleWidth)
-                        button.titleEdgeInsets = UIEdgeInsetsMake(-image!.size.height-distance, -image!.size.width, 0, 0)
-                        
-                    case .imageTopWithSpace(let space):
-                        var distance = space/2
-                        if text == nil || image == nil { distance = 0 }
-                        guard image != nil else { break }
-                        let titleWidth = button.titleLabel?.frame.size.width ?? 0
-                        let titleHeight = button.titleLabel?.frame.size.height ?? 0
-                        let maxWidth = width
-                        let maxHeight = frame.size.height-space-titleHeight
-                        image = constraintImageSize(image: image!, maxWidth: maxWidth, maxHeight: maxHeight)
-                        
-                        button.imageEdgeInsets = UIEdgeInsetsMake(-titleHeight-distance, 0, 0, -titleWidth)
-                        button.titleEdgeInsets = UIEdgeInsetsMake(0, -image!.size.width, -image!.size.height-distance, 0)
-                        button.contentHorizontalAlignment = .center
-                        button.contentVerticalAlignment = .center
-                    }
-                    totalWidth += width
-                } else {
-                    let edge = widthStyle.edge
-                    let text = titleSources[index] as NSString
-                    let width = text.size(withAttributes: [.font: textFont]).width + edge*2
-                    button.frame = CGRect(x: totalWidth, y: 0, width: width, height: frame.size.height)
-                    totalWidth += width
+                let width = imageStyleWidth/// 设定的宽度
+                button.frame = CGRect(x: CGFloat(index)*width, y: 0, width: width, height: frame.size.height)
+                switch hybridType {
+                case .normalWithSpace(let space):
+                    var distance = space/2
+                    if text == nil || image == nil { distance = 0 }
+                    guard image != nil else { break }
+                    let maxWidth = image!.size.width
+                    image = constraintImageSize(image: image!, maxWidth: maxWidth, maxHeight: frame.size.height)
+                    button.imageEdgeInsets = UIEdgeInsetsMake(0, -distance, 0, distance)
+                    button.titleEdgeInsets = UIEdgeInsetsMake(0, distance, 0, -distance)
+                    button.contentEdgeInsets = UIEdgeInsetsMake(0, distance, 0, distance)
+                    button.contentHorizontalAlignment = .center
+                case .imageRightWithSpace(let space):
+                    var distance = space/2
+                    if text == nil || image == nil { distance = 0 }
+                    guard image != nil else { break }
+                    var titleWidth = text?.size(withAttributes: [.font: textFont]).width ?? 0
+                    titleWidth = min(width, titleWidth)
+                    let maxWidth = image!.size.width
+                    image = constraintImageSize(image: image!, maxWidth: maxWidth, maxHeight: frame.size.height)
+                    button.imageEdgeInsets = UIEdgeInsetsMake(0, titleWidth+distance, 0, -titleWidth-distance)
+                    button.titleEdgeInsets = UIEdgeInsetsMake(0, -image!.size.width-distance, 0, image!.size.width+distance)
+                    button.contentEdgeInsets = UIEdgeInsetsMake(0, distance, 0, distance)
+                    button.contentHorizontalAlignment = .center
+                case .imageBottomWithSpace(let space):
+                    var distance = space/2
+                    if text == nil || image == nil { distance = 0 }
+                    guard image != nil else { break }
+                    image = constraintImageSize(image: image!, maxWidth: width, maxHeight: image!.size.height)
+                    let titleWidth = text?.size(withAttributes: [.font: textFont]).width ?? 0
+                    let titleHeight = text?.size(withAttributes: [.font: textFont]).height ?? 0
+                    button.imageEdgeInsets = UIEdgeInsetsMake(0, 0, -titleHeight-distance, -titleWidth)
+                    button.titleEdgeInsets = UIEdgeInsetsMake(-image!.size.height-distance, -image!.size.width, 0, 0)
+                    
+                case .imageTopWithSpace(let space):
+                    var distance = space/2
+                    if text == nil || image == nil { distance = 0 }
+                    guard image != nil else { break }
+                    image = constraintImageSize(image: image!, maxWidth: width, maxHeight: image!.size.height)
+                    let titleWidth = text?.size(withAttributes: [.font: textFont]).width ?? 0
+                    let titleHeight = text?.size(withAttributes: [.font: textFont]).height ?? 0
+                    button.imageEdgeInsets = UIEdgeInsetsMake(-titleHeight-distance, 0, 0, -titleWidth)
+                    button.titleEdgeInsets = UIEdgeInsetsMake(0, -image!.size.width, -image!.size.height-distance, 0)
                 }
+                totalWidth += width
                 
                 button.setImage(image, for: .normal)
                 button.setTitleColor(textColor, for: .normal)
