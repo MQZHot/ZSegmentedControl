@@ -90,6 +90,16 @@ class ZSegmentedControl: UIView {
         didSet {
             buttonArray.forEach { $0.isSelected = selectedIndex == $0.tag ? true:false }
             updateAssistView()
+            let button = buttonArray[selectedIndex]
+            var offsetx = button.center.x - frame.size.width/2
+            let offsetMax = scrollView.contentSize.width - frame.size.width
+            if offsetx < 0 {
+                offsetx = 0
+            }else if offsetx > offsetMax {
+                offsetx = offsetMax
+            }
+            let offset = CGPoint(x: offsetx, y: scrollView.contentOffset.y)
+            scrollView.setContentOffset(offset, animated: true)
         }
     }
     var textFont: UIFont = UIFont.systemFont(ofSize: 15)
@@ -100,6 +110,8 @@ class ZSegmentedControl: UIView {
     var hybridType: ZSegmentedControlHybridType = .normalWithSpace(0)
     
     /// private
+    fileprivate var thumbViewMask = UIView()
+    fileprivate var thumbView = UIView()
     fileprivate lazy var scrollView = UIScrollView()
     fileprivate var itemsCount: Int = 0
     fileprivate lazy var titleSources = [String]()
@@ -117,6 +129,7 @@ class ZSegmentedControl: UIView {
         scrollView.bounces = false
         addSubview(scrollView)
         scrollView.addSubview(assistView)
+        
         for i in 0..<itemsCount {
             let button = UIButton(type: .custom)
             button.tag = i
@@ -125,11 +138,11 @@ class ZSegmentedControl: UIView {
             scrollView.addSubview(button)
             buttonArray.append(button)
         }
+        scrollView.addSubview(thumbView)
         selectedIndex = 0
     }
+    
     @objc private func segmentedSelectedIndex(_ sender: UIButton) {
-//        updateItems()
-//        updateAssistView()
         selectedIndex = sender.tag
         delegate?.segmentedControlSelectedIndex(sender.tag, segmentedControl: self)
     }
@@ -266,7 +279,7 @@ class ZSegmentedControl: UIView {
         let button = buttonArray[selectedIndex]
         assistView.backgroundColor = assistColor
         var frame = button.frame
-        UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: 0.3) {
             switch self.assistStyle {
             case .background:
                 self.assistView.frame = frame
@@ -279,7 +292,7 @@ class ZSegmentedControl: UIView {
                 self.assistView.frame = frame
             default: break
             }
-        }, completion: nil)
+        }
     }
     
     override func layoutSubviews() {

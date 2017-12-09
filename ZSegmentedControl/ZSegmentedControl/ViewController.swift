@@ -19,7 +19,7 @@ class ViewController: UIViewController {
         let width = view.frame.size.width
         /// example - 0
         let frame = CGRect(x: 0, y: 0, width: width, height: 40)
-        let titles = ["hello-world","one","two","three","four","five","six","seven","eight"]
+        let titles = ["hello-world","one","two","three-apple","four","five-cats","six","seven","eight"]
         let segmentedControl = ZSegmentedControl(frame: frame, titles: titles, widthStyle: .sizeToFitWithEdge(10))
         segmentedControl.textColor = UIColor.white
         segmentedControl.backgroundColor = UIColor.blue
