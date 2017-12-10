@@ -54,30 +54,15 @@ protocol ZSegmentedControlSelectedProtocol {
 }
 class ZSegmentedControl: UIView {
     
-    public init (frame: CGRect, titles: [String], selectedTitles: [String]? = nil, widthStyle: ZSegmentedControlWidthStyle) {
-        super.init (frame: frame)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupContentView()
+    }
+    func setTitles(_ titles: [String], widthStyle: ZSegmentedControlWidthStyle) {
         typeStyle = .text
         self.widthStyle = widthStyle
         titleSources = titles
         itemsCount = titles.count
-        setupItems()
-    }
-    
-    public init (frame: CGRect, images: [UIImage], itemWidth: CGFloat) {
-        super.init (frame: frame)
-        imageStyleWidth = itemWidth
-        typeStyle = .image
-        imageSources = images
-        itemsCount = images.count
-        setupItems()
-    }
-    
-    public init (frame: CGRect, hybridSources: ([String?], [UIImage?]), itemWidth: CGFloat) {
-        super.init (frame: frame)
-        typeStyle = .hybrid
-        imageStyleWidth = itemWidth
-        self.hybridSources = hybridSources
-        itemsCount = max(hybridSources.0.count, hybridSources.1.count)
         setupItems()
     }
     
@@ -112,24 +97,28 @@ class ZSegmentedControl: UIView {
     /// private
     fileprivate var thumbViewMask = UIView()
     fileprivate var thumbView = UIView()
-    fileprivate lazy var scrollView = UIScrollView()
+    fileprivate var scrollView = UIScrollView()
     fileprivate var itemsCount: Int = 0
-    fileprivate lazy var titleSources = [String]()
-    fileprivate lazy var imageSources = [UIImage]()
-    fileprivate lazy var hybridSources: ([String?], [UIImage?]) = ([], [])
-    fileprivate lazy var buttonArray = [UIButton]()
+    fileprivate var titleSources = [String]()
+    fileprivate var imageSources = [UIImage]()
+    fileprivate var hybridSources: ([String?], [UIImage?]) = ([], [])
+    fileprivate var buttonArray = [UIButton]()
     fileprivate lazy var assistView = UIView()
     fileprivate var typeStyle: ZSegmentedControlStyle!
     fileprivate var widthStyle: ZSegmentedControlWidthStyle!
     fileprivate var imageStyleWidth: CGFloat = 0
-    fileprivate func setupItems() {
-        backgroundColor = UIColor.white
+    
+    func setupContentView() {
         scrollView.frame = bounds
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.bounces = false
         addSubview(scrollView)
         scrollView.addSubview(assistView)
-        
+    }
+    
+    fileprivate func setupItems() {
+        buttonArray.forEach { $0.removeFromSuperview() }
+        buttonArray.removeAll()
         for i in 0..<itemsCount {
             let button = UIButton(type: .custom)
             button.tag = i

@@ -20,14 +20,14 @@ class ContainerViewController: UIViewController {
         view.backgroundColor = UIColor.gray
         
         let width = view.frame.size.width
-        let frame = CGRect(x: 0, y: 0, width: width, height: 40)
-        segmentedControl = ZSegmentedControl(frame: frame, titles: titles, widthStyle: .sizeToFitWithEdge(10))
-        segmentedControl.textColor = UIColor.white
-        segmentedControl.backgroundColor = UIColor.blue
-//        segmentedControl.selectedIndex = 1
-        segmentedControl.assistColor = UIColor.green
-        segmentedControl.assistStyle = .background
-        segmentedControl.delegate = self
+//        let frame = CGRect(x: 0, y: 0, width: width, height: 40)
+//        segmentedControl = ZSegmentedControl(frame: frame, titles: titles, widthStyle: .sizeToFitWithEdge(10))
+//        segmentedControl.textColor = UIColor.white
+//        segmentedControl.backgroundColor = UIColor.blue
+////        segmentedControl.selectedIndex = 1
+//        segmentedControl.assistColor = UIColor.green
+//        segmentedControl.assistStyle = .background
+//        segmentedControl.delegate = self
         view.addSubview(segmentedControl)
         
         for i in 0..<titles.count {
