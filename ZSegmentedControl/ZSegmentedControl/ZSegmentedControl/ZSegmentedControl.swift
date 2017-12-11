@@ -95,9 +95,9 @@ class ZSegmentedControl: UIView {
     var hybridType: ZSegmentedControlHybridType = .normalWithSpace(0)
     
     /// private
-    fileprivate var thumbViewMask = UIView()
-    fileprivate var thumbView = UIView()
+    fileprivate var assistViewMask = UIView()
     fileprivate var scrollView = UIScrollView()
+    fileprivate var assistScrollView = UIScrollView()
     fileprivate var itemsCount: Int = 0
     fileprivate var titleSources = [String]()
     fileprivate var imageSources = [UIImage]()
@@ -113,7 +113,15 @@ class ZSegmentedControl: UIView {
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.bounces = false
         addSubview(scrollView)
+        
         scrollView.addSubview(assistView)
+        
+        assistScrollView .frame = bounds
+        assistScrollView.showsHorizontalScrollIndicator = false
+        scrollView.bounces = false
+        addSubview(assistScrollView)
+        
+        addSubview(assistViewMask)
     }
     
     fileprivate func setupItems() {
@@ -126,8 +134,12 @@ class ZSegmentedControl: UIView {
             button.addTarget(self, action: #selector(segmentedSelectedIndex), for: .touchUpInside)
             scrollView.addSubview(button)
             buttonArray.append(button)
+            
+            let assistButton = UIButton(type: .custom)
+            assistButton.addTarget(self, action: #selector(segmentedSelectedIndex), for: .touchUpInside)
+            assistScrollView.addSubview(assistButton)
+            
         }
-        scrollView.addSubview(thumbView)
         selectedIndex = 0
     }
     
@@ -158,7 +170,7 @@ class ZSegmentedControl: UIView {
                 button.titleLabel?.font = textFont
             }
             scrollView.contentSize = CGSize(width: totalWidth, height: 0)
-            
+            assistScrollView.contentSize = CGSize(width: totalWidth, height: 0)
         case .image:
             /// image frame
             for (index, button) in buttonArray.enumerated() {
