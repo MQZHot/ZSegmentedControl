@@ -22,21 +22,14 @@ class ViewController: UIViewController {
         let titles = ["hello-world","one","two","three-apple","four","five-cats","six","seven","eight"]
         
         let segmentedControl = ZSegmentedControl(frame: frame)
-        segmentedControl.setTitles(titles, widthStyle: .sizeToFitWithEdge(20))
-        segmentedControl.textColor = UIColor.white
-        segmentedControl.backgroundColor = UIColor.blue
-        segmentedControl.selectedIndex = 1
-        segmentedControl.assistColor = UIColor.green
-        segmentedControl.assistStyle = .background
-        segmentedControl.delegate = self
+        segmentedControl.backgroundColor = UIColor.lightGray
+        segmentedControl.bounces = true
+        segmentedControl.setTitles(titles, width: 80)
+        segmentedControl.textColor = UIColor.yellow
+        segmentedControl.textSelectedColor = UIColor.red
+        segmentedControl.sliderColor = UIColor.green
         view.addSubview(segmentedControl)
         
     }
     
-}
-
-extension ViewController: ZSegmentedControlSelectedProtocol {
-    func segmentedControlSelectedIndex(_ index: Int, segmentedControl: ZSegmentedControl) {
-        print(index)
-    }
 }

@@ -31,7 +31,7 @@
         <!--ZSegmentedControl-->
         <scene sceneID="VI4-aI-Hmy">
             <objects>
-                <tableViewController id="TcS-e7-Wcu" customClass="TableViewController" customModule="ZSegmentedControl" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="TcS-e7-Wcu" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="15L-c9-JRI">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -120,7 +120,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Uzj-2M-vxU">
-                                <rect key="frame" x="0.0" y="60" width="375" height="607"/>
+                                <rect key="frame" x="0.0" y="104" width="375" height="563"/>
                                 <connections>
                                     <outlet property="delegate" destination="ZMU-SV-hko" id="hKN-rK-oaZ"/>
                                 </connections>
@@ -153,7 +153,7 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="hwv-wd-15E"/>
+                        <segue destination="TcS-e7-Wcu" kind="relationship" relationship="rootViewController" id="eL3-ij-X7y"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="v93-1A-ZLB" userLabel="First Responder" sceneMemberID="firstResponder"/>
