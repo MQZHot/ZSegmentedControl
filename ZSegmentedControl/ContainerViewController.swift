@@ -17,38 +17,44 @@ class ContainerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         edgesForExtendedLayout = .init(rawValue: 0)
-        view.backgroundColor = UIColor.gray
         
         let width = view.frame.size.width
         /// example - 0
         let frame = CGRect(x: 0, y: 0, width: width, height: 40)
         let titles = ["hello-world","one","two","three-apple","four","five-cats","six","seven","eight"]
         segmentedControl = ZSegmentedControl(frame: frame)
+        segmentedControl.delegate = self
         segmentedControl.backgroundColor = UIColor.lightGray
         segmentedControl.bounces = true
-        segmentedControl.setTitles(titles, width: 80)
+        segmentedControl.selectedIndex = 8
+        
         segmentedControl.textColor = UIColor.yellow
         segmentedControl.textSelectedColor = UIColor.red
+        segmentedControl.setTitles(titles, adaptiveLeading: 10)
         segmentedControl.sliderColor = UIColor.green
-        segmentedControl.delegate = self
-        segmentedControl.selectedIndex = 5
+        
+//        let images = [#imageLiteral(resourceName: "p1"),#imageLiteral(resourceName: "p2"),#imageLiteral(resourceName: "p3"),#imageLiteral(resourceName: "p4"),#imageLiteral(resourceName: "p5"),#imageLiteral(resourceName: "p6"),#imageLiteral(resourceName: "p7"),#imageLiteral(resourceName: "p8")]
+//        segmentedControl.setImages(images, fixedWidth: 80)
+
         view.addSubview(segmentedControl)
         
+        scrollView.contentSize = CGSize(width: CGFloat(titles.count)*width, height:0)
         for i in 0..<titles.count {
-            let subVC = SubTableViewController()
+            let subVC = UIViewController()
+            subVC.view.backgroundColor = UIColor(red: CGFloat(arc4random()%256)/255, green: CGFloat(arc4random()%256)/255, blue: CGFloat(arc4random()%256)/255, alpha: 1)
+            addChildViewController(subVC)
             subVC.view.frame = CGRect(x: width*CGFloat(i), y: 0, width: width, height: scrollView.frame.size.height)
             scrollView.addSubview(subVC.view)
-            addChildViewController(subVC)
         }
-        scrollView.contentSize = CGSize(width: CGFloat(titles.count)*width, height:0)
+        
     }
 }
 extension ContainerViewController: ZSegmentedControlSelectedProtocol {
-    func segmentedControlSelectedIndex(_ index: Int, segmentedControl: ZSegmentedControl) {
+    func segmentedControlSelectedIndex(_ index: Int, animated: Bool, segmentedControl: ZSegmentedControl) {
         let offsetX = CGFloat(index)*scrollView.frame.size.width
         let offsetY = scrollView.contentOffset.y
         let offset = CGPoint(x: offsetX, y: offsetY)
-        scrollView.setContentOffset(offset, animated: true)
+        scrollView.setContentOffset(offset, animated: animated)
     }
 }
 
@@ -62,6 +68,6 @@ extension ContainerViewController: UIScrollViewDelegate {
     }
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let index = scrollView.contentOffset.x / scrollView.frame.size.width
-        segmentedControl.scrollOffset = index
+        segmentedControl.sliderOffset = index
     }
 }

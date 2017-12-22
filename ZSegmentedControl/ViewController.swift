@@ -24,7 +24,7 @@ class ViewController: UIViewController {
         let segmentedControl = ZSegmentedControl(frame: frame)
         segmentedControl.backgroundColor = UIColor.lightGray
         segmentedControl.bounces = true
-        segmentedControl.setTitles(titles, width: 80)
+        segmentedControl.setTitles(titles, fixedWidth: 80)
         segmentedControl.textColor = UIColor.yellow
         segmentedControl.textSelectedColor = UIColor.red
         segmentedControl.sliderColor = UIColor.green
