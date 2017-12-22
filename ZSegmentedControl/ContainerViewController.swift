@@ -35,7 +35,8 @@ class ContainerViewController: UIViewController {
         
         let images = [#imageLiteral(resourceName: "sp1"), #imageLiteral(resourceName: "sp2"), #imageLiteral(resourceName: "sp3"), #imageLiteral(resourceName: "sp4"), #imageLiteral(resourceName: "sp5"), #imageLiteral(resourceName: "sp6"), #imageLiteral(resourceName: "sp7"), #imageLiteral(resourceName: "sp8")]
         let selectedImages = [#imageLiteral(resourceName: "p1"),#imageLiteral(resourceName: "p2"),#imageLiteral(resourceName: "p3"),#imageLiteral(resourceName: "p4"),#imageLiteral(resourceName: "p5"),#imageLiteral(resourceName: "p6"),#imageLiteral(resourceName: "p7"),#imageLiteral(resourceName: "p8")]
-        segmentedControl.setImages(images, selectedImages: selectedImages, fixedWidth: 80)
+//        segmentedControl.setImages(images, selectedImages: selectedImages, fixedWidth: 80)
+        segmentedControl.setHybridResource(titles, images: images, selectedImages: selectedImages, style: .normalWithSpace(0), fixedWidth: 80)
         view.addSubview(segmentedControl)
         
         scrollView.contentSize = CGSize(width: CGFloat(images.count)*width, height:0)

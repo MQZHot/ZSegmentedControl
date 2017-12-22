@@ -10,6 +10,13 @@ import UIKit
 enum ResourceType {
     case text
     case image
+    case hybrid
+}
+enum HybridStyle {
+    case normalWithSpace(CGFloat)
+    case imageRightWithSpace(CGFloat)
+    case imageTopWithSpace(CGFloat)
+    case imageBottomWithSpace(CGFloat)
 }
 enum SliderStyle {
     case cover
@@ -43,12 +50,19 @@ class ZSegmentedControl: UIView {
         totalItemsCount = titles.count
         setupItems(fixedWidth: 0, leading: adaptiveLeading)
     }
-    func setImages(_ images: [UIImage], selectedImages: [UIImage]? = nil, fixedWidth: CGFloat) {
+    func setImages(_ images: [UIImage], selectedImages: [UIImage?]? = nil, fixedWidth: CGFloat) {
         resourceType = .image
         imageSources = (images, selectedImages)
         totalItemsCount = images.count
         setupItems(fixedWidth: fixedWidth)
     }
+    func setHybridResource(_ titles: [String?], images: [UIImage?], selectedImages: [UIImage?]? = nil, style: HybridStyle = .normalWithSpace(0), fixedWidth: CGFloat) {
+        resourceType = .hybrid
+        hybridSources = (titles, images, selectedImages)
+        totalItemsCount = max(titles.count, images.count)
+        setupItems(fixedWidth: fixedWidth)
+    }
+    
     
     /// public
     var bounces: Bool = false {
@@ -111,6 +125,7 @@ class ZSegmentedControl: UIView {
     fileprivate var totalItemsCount: Int = 0
     fileprivate var titleSources = [String]()
     fileprivate var imageSources: ([UIImage], [UIImage?]?) = ([], nil)
+    fileprivate var hybridSources: ([String?], [UIImage?], [UIImage?]?) = ([], [], nil)
     fileprivate var resourceType: ResourceType = .text
     fileprivate var isTapItem: Bool = false
     
@@ -172,7 +187,21 @@ class ZSegmentedControl: UIView {
                 selectedButton.titleLabel?.font = textFont
             case .image:
                 button.setImage(imageSources.0[i], for: .normal)
-                selectedButton.setImage(imageSources.1?[i], for: .normal)
+                let selectedImage = imageSources.1?[i]==nil ? imageSources.0[i] : imageSources.1?[i]
+                selectedButton.setImage(selectedImage, for: .normal)
+            case .hybrid:
+                let titles = hybridSources.0
+                let images = hybridSources.1
+                let selectedImages = hybridSources.2
+                button.setTitle(hybridSources.0[i], for: .normal)
+                button.setTitleColor(textColor, for: .normal)
+                button.titleLabel?.font = textFont
+                selectedButton.setTitle(hybridSources.0[i], for: .normal)
+                selectedButton.setTitleColor(textSelectedColor, for: .normal)
+                selectedButton.titleLabel?.font = textFont
+                button.setImage(hybridSources.1[i], for: .normal)
+                let selectedImage = hybridSources.2?[i]==nil ? hybridSources.1[i] : hybridSources.2?[i]
+                selectedButton.setImage(selectedImage, for: .normal)
             }
             contentSizeWidth += width
         }
