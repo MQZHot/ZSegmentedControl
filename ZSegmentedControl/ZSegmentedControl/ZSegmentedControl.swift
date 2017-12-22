@@ -193,13 +193,22 @@ class ZSegmentedControl: UIView {
                 let titles = hybridSources.0
                 let images = hybridSources.1
                 let selectedImages = hybridSources.2
-                button.setTitle(hybridSources.0[i], for: .normal)
+                if let title = titles[i] {
+                    button.setTitle(title, for: .normal)
+                    selectedButton.setTitle(title, for: .normal)
+                }
+                if let image = images[i] {
+                    button.setImage(image, for: .normal)
+                }
+                if let selectedImage = selectedImages[i] {
+                    selectedButton.setImage(selectedImage, for: .normal)
+                }
                 button.setTitleColor(textColor, for: .normal)
                 button.titleLabel?.font = textFont
-                selectedButton.setTitle(hybridSources.0[i], for: .normal)
+                
                 selectedButton.setTitleColor(textSelectedColor, for: .normal)
                 selectedButton.titleLabel?.font = textFont
-                button.setImage(hybridSources.1[i], for: .normal)
+                
                 let selectedImage = hybridSources.2?[i]==nil ? hybridSources.1[i] : hybridSources.2?[i]
                 selectedButton.setImage(selectedImage, for: .normal)
             }
