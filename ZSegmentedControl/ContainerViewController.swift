@@ -33,13 +33,13 @@ class ContainerViewController: UIViewController {
         segmentedControl.setTitles(titles, adaptiveLeading: 10)
         segmentedControl.sliderColor = UIColor.green
         
-//        let images = [#imageLiteral(resourceName: "p1"),#imageLiteral(resourceName: "p2"),#imageLiteral(resourceName: "p3"),#imageLiteral(resourceName: "p4"),#imageLiteral(resourceName: "p5"),#imageLiteral(resourceName: "p6"),#imageLiteral(resourceName: "p7"),#imageLiteral(resourceName: "p8")]
-//        segmentedControl.setImages(images, fixedWidth: 80)
-
+        let images = [#imageLiteral(resourceName: "sp1"), #imageLiteral(resourceName: "sp2"), #imageLiteral(resourceName: "sp3"), #imageLiteral(resourceName: "sp4"), #imageLiteral(resourceName: "sp5"), #imageLiteral(resourceName: "sp6"), #imageLiteral(resourceName: "sp7"), #imageLiteral(resourceName: "sp8")]
+        let selectedImages = [#imageLiteral(resourceName: "p1"),#imageLiteral(resourceName: "p2"),#imageLiteral(resourceName: "p3"),#imageLiteral(resourceName: "p4"),#imageLiteral(resourceName: "p5"),#imageLiteral(resourceName: "p6"),#imageLiteral(resourceName: "p7"),#imageLiteral(resourceName: "p8")]
+        segmentedControl.setImages(images, selectedImages: selectedImages, fixedWidth: 80)
         view.addSubview(segmentedControl)
         
-        scrollView.contentSize = CGSize(width: CGFloat(titles.count)*width, height:0)
-        for i in 0..<titles.count {
+        scrollView.contentSize = CGSize(width: CGFloat(images.count)*width, height:0)
+        for i in 0..<images.count {
             let subVC = UIViewController()
             subVC.view.backgroundColor = UIColor(red: CGFloat(arc4random()%256)/255, green: CGFloat(arc4random()%256)/255, blue: CGFloat(arc4random()%256)/255, alpha: 1)
             addChildViewController(subVC)

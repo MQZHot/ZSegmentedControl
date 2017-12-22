@@ -11,27 +11,11 @@ enum ResourceType {
     case text
     case image
 }
-enum TextWidthStyle {
-    case adaptiveWithLeading(CGFloat)
-    case fixedWithWidth(CGFloat)
-    var isFixed: Bool {
-        switch self {
-        case .fixedWithWidth(_):        return true
-        case .adaptiveWithLeading(_):   return false
-        }
-    }
-    var adaptiveLeading: CGFloat {
-        switch self {
-        case .adaptiveWithLeading(let leading): return leading
-        default: return 0
-        }
-    }
-    var fixedWidth: CGFloat {
-        switch self {
-        case .fixedWithWidth(let width): return width
-        default: return 0
-        }
-    }
+enum SliderStyle {
+    case cover
+    case bottom(CGFloat)
+    case top(CGFloat)
+    case none
 }
 /// 点击
 protocol ZSegmentedControlSelectedProtocol {
@@ -59,9 +43,9 @@ class ZSegmentedControl: UIView {
         totalItemsCount = titles.count
         setupItems(fixedWidth: 0, leading: adaptiveLeading)
     }
-    func setImages(_ images: [UIImage], fixedWidth: CGFloat) {
+    func setImages(_ images: [UIImage], selectedImages: [UIImage]? = nil, fixedWidth: CGFloat) {
         resourceType = .image
-        imageSources = images
+        imageSources = (images, selectedImages)
         totalItemsCount = images.count
         setupItems(fixedWidth: fixedWidth)
     }
@@ -89,12 +73,26 @@ class ZSegmentedControl: UIView {
     var sliderColor: UIColor = UIColor.red {
         didSet { sliderView.backgroundColor = sliderColor }
     }
+    var sliderEdge: UIEdgeInsets = .zero {
+        didSet {  }
+    }
+    var sliderCornerRadius: CGFloat = 0 {
+        didSet {  }
+    }
+    
+    
     var sliderOffset: CGFloat = 0 {
         didSet { updateSilderOffset() }
     }
     
     var selectedIndex: Int = 0 {
-        didSet { updateOffset() }
+        didSet {
+            if selectedIndex<0||selectedIndex>selectedItemsArray.count-1 {
+                selectedIndex = 0
+                return
+            }
+            updateOffset()
+        }
     }
     
     override func layoutSubviews() {
@@ -112,7 +110,7 @@ class ZSegmentedControl: UIView {
     fileprivate var sliderViewMask = UIView()
     fileprivate var totalItemsCount: Int = 0
     fileprivate var titleSources = [String]()
-    fileprivate var imageSources = [UIImage]()
+    fileprivate var imageSources: ([UIImage], [UIImage?]?) = ([], nil)
     fileprivate var resourceType: ResourceType = .text
     fileprivate var isTapItem: Bool = false
     
@@ -173,7 +171,8 @@ class ZSegmentedControl: UIView {
                 selectedButton.setTitleColor(textSelectedColor, for: .normal)
                 selectedButton.titleLabel?.font = textFont
             case .image:
-                button.setImage(imageSources[i], for: .normal)
+                button.setImage(imageSources.0[i], for: .normal)
+                selectedButton.setImage(imageSources.1?[i], for: .normal)
             }
             contentSizeWidth += width
         }
@@ -211,9 +210,6 @@ class ZSegmentedControl: UIView {
         sliderViewMask.frame = sliderView.frame
     }
     fileprivate func updateOffset() {
-        if selectedIndex<0||selectedIndex>selectedItemsArray.count-1 {
-            return
-        }
         delegate?.segmentedControlSelectedIndex(selectedIndex, animated: isTapItem, segmentedControl: self)
         let button = selectedItemsArray[selectedIndex]
         var offsetx = button.center.x - self.frame.size.width/2
