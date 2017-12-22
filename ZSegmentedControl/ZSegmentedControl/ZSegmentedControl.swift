@@ -101,10 +101,10 @@ class ZSegmentedControl: UIView {
     
     var selectedIndex: Int = 0 {
         didSet {
-            if selectedIndex<0||selectedIndex>selectedItemsArray.count-1 {
-                selectedIndex = 0
-                return
-            }
+//            if selectedIndex<0||selectedIndex>selectedItemsArray.count-1 {
+//                selectedIndex = 0
+//                return
+//            }
             updateOffset()
         }
     }
@@ -186,31 +186,35 @@ class ZSegmentedControl: UIView {
                 selectedButton.setTitleColor(textSelectedColor, for: .normal)
                 selectedButton.titleLabel?.font = textFont
             case .image:
+                var selectedImage = imageSources.0[i]
+                let selectedImages = imageSources.1 == nil ? imageSources.0 : imageSources.1!
+                if i < selectedImages.count && selectedImages[i] != nil {
+                    selectedImage = selectedImages[i]!
+                }
                 button.setImage(imageSources.0[i], for: .normal)
-                let selectedImage = imageSources.1?[i]==nil ? imageSources.0[i] : imageSources.1?[i]
                 selectedButton.setImage(selectedImage, for: .normal)
             case .hybrid:
-                let titles = hybridSources.0
-                let images = hybridSources.1
-                let selectedImages = hybridSources.2
-                if let title = titles[i] {
-                    button.setTitle(title, for: .normal)
-                    selectedButton.setTitle(title, for: .normal)
-                }
-                if let image = images[i] {
-                    button.setImage(image, for: .normal)
-                }
-                if let selectedImage = selectedImages[i] {
-                    selectedButton.setImage(selectedImage, for: .normal)
-                }
                 button.setTitleColor(textColor, for: .normal)
                 button.titleLabel?.font = textFont
-                
                 selectedButton.setTitleColor(textSelectedColor, for: .normal)
                 selectedButton.titleLabel?.font = textFont
                 
-                let selectedImage = hybridSources.2?[i]==nil ? hybridSources.1[i] : hybridSources.2?[i]
-                selectedButton.setImage(selectedImage, for: .normal)
+                let titles = hybridSources.0
+                if i < titles.count, let title = titles[i] {
+                    button.setTitle(title, for: .normal)
+                    selectedButton.setTitle(title, for: .normal)
+                }
+                
+                let images = hybridSources.1
+                if i < images.count, let image = images[i] {
+                    var selectedImage = image
+                    let selectedImages = hybridSources.2 == nil ? images : hybridSources.2!
+                    if i < selectedImages.count && selectedImages[i] != nil {
+                        selectedImage = selectedImages[i]!
+                    }
+                    button.setImage(image, for: .normal)
+                    selectedButton.setImage(selectedImage, for: .normal)
+                }
             }
             contentSizeWidth += width
         }
@@ -248,6 +252,9 @@ class ZSegmentedControl: UIView {
         sliderViewMask.frame = sliderView.frame
     }
     fileprivate func updateOffset() {
+        if selectedItemsArray.count == 0 {
+            return
+        }
         delegate?.segmentedControlSelectedIndex(selectedIndex, animated: isTapItem, segmentedControl: self)
         let button = selectedItemsArray[selectedIndex]
         var offsetx = button.center.x - self.frame.size.width/2

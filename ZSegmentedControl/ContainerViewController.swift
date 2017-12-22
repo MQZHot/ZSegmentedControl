@@ -39,8 +39,8 @@ class ContainerViewController: UIViewController {
         segmentedControl.setHybridResource(titles, images: images, selectedImages: selectedImages, style: .normalWithSpace(0), fixedWidth: 80)
         view.addSubview(segmentedControl)
         
-        scrollView.contentSize = CGSize(width: CGFloat(images.count)*width, height:0)
-        for i in 0..<images.count {
+        scrollView.contentSize = CGSize(width: CGFloat(titles.count)*width, height:0)
+        for i in 0..<titles.count {
             let subVC = UIViewController()
             subVC.view.backgroundColor = UIColor(red: CGFloat(arc4random()%256)/255, green: CGFloat(arc4random()%256)/255, blue: CGFloat(arc4random()%256)/255, alpha: 1)
             addChildViewController(subVC)
