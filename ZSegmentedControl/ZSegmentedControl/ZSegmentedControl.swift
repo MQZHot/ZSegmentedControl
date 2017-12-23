@@ -19,9 +19,9 @@ enum HybridStyle {
     case imageBottomWithSpace(CGFloat)
 }
 enum SliderStyle {
-    case cover
-    case bottom(CGFloat)
-    case top(CGFloat)
+    case coverUpDowmSpace(CGFloat)
+    case bottomWithHight(CGFloat)
+    case topWidthHeight(CGFloat)
     case none
 }
 /// 点击
@@ -63,7 +63,6 @@ class ZSegmentedControl: UIView {
         setupItems(fixedWidth: fixedWidth)
     }
     
-    
     /// public
     var bounces: Bool = false {
         didSet { subScrollView.bounces = bounces }
@@ -84,33 +83,27 @@ class ZSegmentedControl: UIView {
             selectedItemsArray.forEach { $0.titleLabel?.font = textFont }
         }
     }
-    var sliderColor: UIColor = UIColor.red {
-        didSet { sliderView.backgroundColor = sliderColor }
-    }
-    var sliderEdge: UIEdgeInsets = .zero {
-        didSet {  }
-    }
-    var sliderCornerRadius: CGFloat = 0 {
-        didSet {
-            sliderView.layer.cornerRadius = sliderCornerRadius
-        }
+    
+    /// cover
+    func setCover(color: UIColor, upDowmSpace: CGFloat = 0, cornerRadius: CGFloat = 0) {
+        coverView.layer.cornerRadius = cornerRadius
+        coverView.backgroundColor = color
+        coverUpDownSpace = upDowmSpace
+        fixCoverFrame(originFrame: coverView.frame, upSpace: upDowmSpace)
     }
     
     
-    var sliderOffset: CGFloat = 0 {
-        didSet { updateSilderOffset() }
+    var tackingScale: CGFloat = 0 {
+        didSet { updateTackingOffset() }
     }
     
     var selectedIndex: Int = 0 {
-        didSet {
-            selectedIndex = min(max(selectedIndex, 0), selectedItemsArray.count)
-            updateOffset()
-        }
+        didSet { updateScrollViewOffset() }
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        updateOffset()
+        updateScrollViewOffset()
     }
     var delegate: ZSegmentedControlSelectedProtocol?
     
@@ -119,18 +112,18 @@ class ZSegmentedControl: UIView {
     fileprivate var subScrollView = UIScrollView()
     fileprivate var itemsArray = [UIButton]()
     fileprivate var selectedItemsArray = [UIButton]()
-    fileprivate var sliderView = UIView()
-    fileprivate var sliderViewMask = UIView()
+    fileprivate var coverView = UIView()
+    fileprivate var coverViewMask = UIView()
     fileprivate var totalItemsCount: Int = 0
     fileprivate var titleSources = [String]()
     fileprivate var imageSources: ([UIImage], [UIImage?]?) = ([], nil)
     fileprivate var hybridSources: ([String?], [UIImage?], [UIImage?]?) = ([], [], nil)
     fileprivate var resourceType: ResourceType = .text
     fileprivate var isTapItem: Bool = false
+    fileprivate var coverUpDownSpace: CGFloat = 0
     
     fileprivate func setupContentView() {
         backgroundColor = UIColor.white
-        
         scrollView.frame = bounds
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.bounces = false
@@ -142,12 +135,10 @@ class ZSegmentedControl: UIView {
         subScrollView.bounces = false
         addSubview(subScrollView)
         
-        sliderView.backgroundColor = sliderColor
-        sliderView.layer.cornerRadius = sliderCornerRadius
-        subScrollView.addSubview(sliderView)
-        sliderViewMask.backgroundColor = UIColor.white
-        subScrollView.addSubview(sliderViewMask)
-        subScrollView.layer.mask = sliderViewMask.layer
+        subScrollView.addSubview(coverView)
+        coverViewMask.backgroundColor = UIColor.white
+        subScrollView.addSubview(coverViewMask)
+        subScrollView.layer.mask = coverViewMask.layer
     }
     
     fileprivate func setupItems(fixedWidth: CGFloat, leading: CGFloat? = nil) {
@@ -220,18 +211,46 @@ class ZSegmentedControl: UIView {
         }
         scrollView.contentSize = CGSize(width: contentSizeWidth, height: 0)
         subScrollView.contentSize = CGSize(width: contentSizeWidth, height: 0)
-        let button = selectedItemsArray[selectedIndex]
-        sliderView.frame = button.frame
-        sliderViewMask.frame = sliderView.frame
-        subScrollView.contentOffset = correctOffset(item: button)
+        let index = min(max(selectedIndex, 0), selectedItemsArray.count)
+        let button = selectedItemsArray[index]
+        fixCoverFrame(originFrame: button.frame, upSpace: coverUpDownSpace)
+        subScrollView.contentOffset = getScrollViewCorrectOffset(by: button)
     }
-    @objc func selectedButton(sender: UIButton) {
+    @objc private func selectedButton(sender: UIButton) {
         isTapItem = true
         selectedIndex = sender.tag
     }
-    fileprivate func updateSilderOffset() {
+}
+extension ZSegmentedControl {
+    fileprivate func updateScrollViewOffset() {
+        if selectedItemsArray.count == 0 { return }
+        let index = min(max(selectedIndex, 0), selectedItemsArray.count)
+        delegate?.segmentedControlSelectedIndex(index, animated: isTapItem, segmentedControl: self)
+        let button = selectedItemsArray[index]
+        let offset = getScrollViewCorrectOffset(by: button)
+        UIView.animate(withDuration: 0.3, animations: {
+            self.fixCoverFrame(originFrame: button.frame, upSpace: self.coverUpDownSpace)
+        }) { _ in
+            self.subScrollView.setContentOffset(offset, animated: true)
+            self.isTapItem = false
+        }
+    }
+    
+    fileprivate func getScrollViewCorrectOffset(by item: UIButton) -> CGPoint {
+        var offsetx = item.center.x - frame.size.width/2
+        let offsetMax = subScrollView.contentSize.width - frame.size.width
+        if offsetx < 0 {
+            offsetx = 0
+        }else if offsetx > offsetMax {
+            offsetx = offsetMax
+        }
+        let offset = CGPoint(x: offsetx, y: 0)
+        return offset
+    }
+    
+    fileprivate func updateTackingOffset() {
         if isTapItem { return }
-        let percent = sliderOffset-CGFloat(selectedIndex)
+        let percent = tackingScale-CGFloat(selectedIndex)
         var targetIndex = selectedIndex
         if percent < 0 {
             targetIndex = selectedIndex-1
@@ -247,35 +266,20 @@ class ZSegmentedControl: UIView {
         frame.size.width += widthChange
         var center = button.center
         center.x += centerXChange
-        sliderView.frame = frame
-        sliderView.center = center
-        sliderViewMask.frame = sliderView.frame
+        fixCoverFrame(originFrame: button.frame, upSpace: coverUpDownSpace)
+        coverView.center = center
+        coverViewMask.frame = coverView.frame
     }
-    fileprivate func updateOffset() {
-        if selectedItemsArray.count == 0 { return }
-        delegate?.segmentedControlSelectedIndex(selectedIndex, animated: isTapItem, segmentedControl: self)
-        let button = selectedItemsArray[selectedIndex]
-        let offset = correctOffset(item: button)
-        UIView.animate(withDuration: 0.3, animations: {
-            self.sliderView.frame = button.frame
-            self.sliderViewMask.frame = button.frame
-        }) { _ in
-            self.subScrollView.setContentOffset(offset, animated: true)
-            self.isTapItem = false
-        }
-    }
-    fileprivate func correctOffset(item: UIButton) -> CGPoint {
-        var offsetx = item.center.x - frame.size.width/2
-        let offsetMax = subScrollView.contentSize.width - frame.size.width
-        if offsetx < 0 {
-            offsetx = 0
-        }else if offsetx > offsetMax {
-            offsetx = offsetMax
-        }
-        let offset = CGPoint(x: offsetx, y: 0)
-        return offset
+    
+    fileprivate func fixCoverFrame(originFrame: CGRect, upSpace: CGFloat) {
+        var newFrame = originFrame
+        newFrame.origin.y = upSpace
+        newFrame.size.height -= upSpace*2
+        coverView.frame = newFrame
+        coverViewMask.frame = coverView.frame
     }
 }
+/// scrollViewDelegate
 extension ZSegmentedControl: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.scrollView.contentOffset = scrollView.contentOffset

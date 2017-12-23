@@ -27,7 +27,7 @@ class ViewController: UIViewController {
         segmentedControl.setTitles(titles, fixedWidth: 80)
         segmentedControl.textColor = UIColor.yellow
         segmentedControl.textSelectedColor = UIColor.red
-        segmentedControl.sliderColor = UIColor.green
+//        segmentedControl.sliderColor = UIColor.green
         view.addSubview(segmentedControl)
         
     }
