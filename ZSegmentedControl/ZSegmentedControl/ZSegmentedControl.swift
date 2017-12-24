@@ -294,7 +294,7 @@ extension ZSegmentedControl {
         sliderCenter.x = center.x
         slider.center = sliderCenter
         subScrollView.isHidden = !moveDivision
-        if !self.moveDivision && resourceType != .hybrid {
+        if !self.moveDivision && resourceType != .hybrid { /// not use cover
             let currentColor = averageColor(fromColor: textSelectedColor, toColor: textColor, percent: abs(percent))
             let targetColor = averageColor(fromColor: textColor, toColor: textSelectedColor, percent: abs(percent))
             let currentButton = self.itemsArray[selectedIndex]
