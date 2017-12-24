@@ -52,14 +52,36 @@ class ZSegmentedControl: UIView {
     }
     func setImages(_ images: [UIImage], selectedImages: [UIImage?]? = nil, fixedWidth: CGFloat) {
         resourceType = .image
-        imageSources = (images, selectedImages)
+        var sImages = [UIImage]()
+        if selectedImages == nil {
+            sImages = images
+        } else {
+            for i in 0..<images.count {
+                let image = (i < selectedImages!.count && selectedImages![i] != nil) ? selectedImages![i]! : images[i]
+                sImages.append(image)
+            }
+        }
+        imageSources = (images, sImages)
         totalItemsCount = images.count
         setupItems(fixedWidth: fixedWidth)
     }
     func setHybridResource(_ titles: [String?], images: [UIImage?], selectedImages: [UIImage?]? = nil, style: HybridStyle = .normalWithSpace(0), fixedWidth: CGFloat) {
         resourceType = .hybrid
-        hybridSources = (titles, images, selectedImages)
         totalItemsCount = max(titles.count, images.count)
+        var _titles = [String?]()
+        var _images = [UIImage?]()
+        var _sImages = [UIImage?]()
+        let sTempImages = selectedImages == nil ? images : selectedImages!
+        for i in 0..<totalItemsCount {
+            let title = i<titles.count ? titles[i] : nil
+            let image = i<images.count ? images[i] : nil
+            let sImage = i<sTempImages.count ? sTempImages[i] : nil
+            _titles.append(title)
+            _images.append(image)
+            _sImages.append(sImage)
+        }
+        hybridSources = (_titles, _images, _sImages)
+        
         setupItems(fixedWidth: fixedWidth)
     }
     
@@ -86,6 +108,7 @@ class ZSegmentedControl: UIView {
     
     /// cover
     func setCover(color: UIColor, upDowmSpace: CGFloat = 0, cornerRadius: CGFloat = 0) {
+        if color == .clear { return }
         coverView.layer.cornerRadius = cornerRadius
         coverView.backgroundColor = color
         coverUpDownSpace = upDowmSpace
@@ -106,7 +129,7 @@ class ZSegmentedControl: UIView {
         updateScrollViewOffset()
     }
     var delegate: ZSegmentedControlSelectedProtocol?
-    
+    var moveDivision: Bool = false
     /// private
     fileprivate var scrollView = UIScrollView()
     fileprivate var subScrollView = UIScrollView()
@@ -117,8 +140,8 @@ class ZSegmentedControl: UIView {
     fileprivate var slider = UIView()
     fileprivate var totalItemsCount: Int = 0
     fileprivate var titleSources = [String]()
-    fileprivate var imageSources: ([UIImage], [UIImage?]?) = ([], nil)
-    fileprivate var hybridSources: ([String?], [UIImage?], [UIImage?]?) = ([], [], nil)
+    fileprivate var imageSources: ([UIImage], [UIImage]) = ([], [])
+    fileprivate var hybridSources: ([String?], [UIImage?], [UIImage?]) = ([], [], [])
     fileprivate var resourceType: ResourceType = .text
     fileprivate var isTapItem: Bool = false
     fileprivate var coverUpDownSpace: CGFloat = 0
@@ -139,7 +162,6 @@ class ZSegmentedControl: UIView {
         subScrollView.addSubview(coverView)
         coverViewMask.backgroundColor = UIColor.white
         subScrollView.layer.mask = coverViewMask.layer
-//        subScrollView.isHidden = true
         scrollView.addSubview(slider)
     }
     
@@ -160,6 +182,8 @@ class ZSegmentedControl: UIView {
             let button = UIButton(type: .custom)
             button.frame = CGRect(x: x, y: 0, width: width, height: height)
             button.clipsToBounds = true
+            button.tag = i
+            button.addTarget(self, action: #selector(selectedButton(sender:)), for: .touchUpInside)
             scrollView.addSubview(button)
             itemsArray.append(button)
             
@@ -179,35 +203,17 @@ class ZSegmentedControl: UIView {
                 selectedButton.setTitleColor(textSelectedColor, for: .normal)
                 selectedButton.titleLabel?.font = textFont
             case .image:
-                var selectedImage = imageSources.0[i]
-                let selectedImages = imageSources.1 == nil ? imageSources.0 : imageSources.1!
-                if i < selectedImages.count && selectedImages[i] != nil {
-                    selectedImage = selectedImages[i]!
-                }
                 button.setImage(imageSources.0[i], for: .normal)
-                selectedButton.setImage(selectedImage, for: .normal)
+                selectedButton.setImage(imageSources.1[i], for: .normal)
             case .hybrid:
                 button.setTitleColor(textColor, for: .normal)
                 button.titleLabel?.font = textFont
                 selectedButton.setTitleColor(textSelectedColor, for: .normal)
                 selectedButton.titleLabel?.font = textFont
-                
-                let titles = hybridSources.0
-                if i < titles.count, let title = titles[i] {
-                    button.setTitle(title, for: .normal)
-                    selectedButton.setTitle(title, for: .normal)
-                }
-                
-                let images = hybridSources.1
-                if i < images.count, let image = images[i] {
-                    var selectedImage = image
-                    let selectedImages = hybridSources.2 == nil ? images : hybridSources.2!
-                    if i < selectedImages.count && selectedImages[i] != nil {
-                        selectedImage = selectedImages[i]!
-                    }
-                    button.setImage(image, for: .normal)
-                    selectedButton.setImage(selectedImage, for: .normal)
-                }
+                button.setTitle(hybridSources.0[i], for: .normal)
+                selectedButton.setTitle(hybridSources.0[i], for: .normal)
+                button.setImage(hybridSources.1[i], for: .normal)
+                selectedButton.setImage(hybridSources.2[i], for: .normal)
             }
             contentSizeWidth += width
         }
@@ -226,6 +232,7 @@ class ZSegmentedControl: UIView {
 extension ZSegmentedControl {
     fileprivate func updateScrollViewOffset() {
         if selectedItemsArray.count == 0 { return }
+        subScrollView.isHidden = !moveDivision
         let index = min(max(selectedIndex, 0), selectedItemsArray.count)
         delegate?.segmentedControlSelectedIndex(index, animated: isTapItem, segmentedControl: self)
         let button = selectedItemsArray[index]
@@ -233,6 +240,24 @@ extension ZSegmentedControl {
         UIView.animate(withDuration: 0.3, animations: {
             self.fixCoverFrame(originFrame: button.frame, upSpace: self.coverUpDownSpace)
         }) { _ in
+            if !self.moveDivision {
+                for (i, item) in self.itemsArray.enumerated() {
+                    item.setTitleColor(self.textColor, for: .normal)
+                    if self.resourceType == .image {
+                        item.setImage(self.imageSources.0[i], for: .normal)
+                    } else if self.resourceType == .hybrid {
+                        item.setImage(self.hybridSources.1[i], for: .normal)
+                    }
+                }
+                let currentButton = self.itemsArray[index]
+                currentButton.setTitleColor(self.textSelectedColor, for: .normal)
+                if self.resourceType == .image {
+                    currentButton.setImage(self.imageSources.1[index], for: .normal)
+                } else if self.resourceType == .hybrid {
+                    currentButton.setImage(self.hybridSources.2[index], for: .normal)
+                }
+                
+            }
             self.subScrollView.setContentOffset(offset, animated: true)
             self.isTapItem = false
         }
@@ -274,6 +299,15 @@ extension ZSegmentedControl {
         var sliderCenter = slider.center
         sliderCenter.x = center.x
         slider.center = sliderCenter
+        subScrollView.isHidden = !moveDivision
+        if !self.moveDivision {
+            let currentColor = averageColor(fromColor: textSelectedColor, toColor: textColor, percent: abs(percent))
+            let targetColor = averageColor(fromColor: textColor, toColor: textSelectedColor, percent: abs(percent))
+            let currentButton = self.itemsArray[selectedIndex]
+            currentButton.setTitleColor(currentColor, for: .normal)
+            let targentButton = self.itemsArray[targetIndex]
+            targentButton.setTitleColor(targetColor, for: .normal)
+        }
     }
     
     fileprivate func fixCoverFrame(originFrame: CGRect, upSpace: CGFloat) {
@@ -292,6 +326,26 @@ extension ZSegmentedControl {
 extension ZSegmentedControl: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.scrollView.contentOffset = scrollView.contentOffset
+    }
+    fileprivate func averageColor(fromColor: UIColor, toColor: UIColor, percent: CGFloat) -> UIColor {
+        var fromRed: CGFloat = 0
+        var fromGreen: CGFloat = 0
+        var fromBlue: CGFloat = 0
+        var fromAlpha: CGFloat = 0
+        fromColor.getRed(&fromRed, green: &fromGreen, blue: &fromBlue, alpha: &fromAlpha)
+        
+        var toRed: CGFloat = 0
+        var toGreen: CGFloat = 0
+        var toBlue: CGFloat = 0
+        var toAlpha: CGFloat = 0
+        toColor.getRed(&toRed, green: &toGreen, blue: &toBlue, alpha: &toAlpha)
+        
+        let nowRed = fromRed + (toRed - fromRed) * percent
+        let nowGreen = fromGreen + (toGreen - fromGreen) * percent
+        let nowBlue = fromBlue + (toBlue - fromBlue) * percent
+        let nowAlpha = fromAlpha + (toAlpha - fromAlpha) * percent
+        
+        return UIColor(red: nowRed, green: nowGreen, blue: nowBlue, alpha: nowAlpha)
     }
 }
 
