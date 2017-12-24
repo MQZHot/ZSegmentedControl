@@ -114,6 +114,7 @@ class ZSegmentedControl: UIView {
     fileprivate var selectedItemsArray = [UIButton]()
     fileprivate var coverView = UIView()
     fileprivate var coverViewMask = UIView()
+    fileprivate var slider = UIView()
     fileprivate var totalItemsCount: Int = 0
     fileprivate var titleSources = [String]()
     fileprivate var imageSources: ([UIImage], [UIImage?]?) = ([], nil)
@@ -137,8 +138,9 @@ class ZSegmentedControl: UIView {
         
         subScrollView.addSubview(coverView)
         coverViewMask.backgroundColor = UIColor.white
-        subScrollView.addSubview(coverViewMask)
         subScrollView.layer.mask = coverViewMask.layer
+//        subScrollView.isHidden = true
+        scrollView.addSubview(slider)
     }
     
     fileprivate func setupItems(fixedWidth: CGFloat, leading: CGFloat? = nil) {
@@ -266,9 +268,12 @@ extension ZSegmentedControl {
         frame.size.width += widthChange
         var center = button.center
         center.x += centerXChange
-        fixCoverFrame(originFrame: button.frame, upSpace: coverUpDownSpace)
+        fixCoverFrame(originFrame: frame, upSpace: coverUpDownSpace)
         coverView.center = center
         coverViewMask.frame = coverView.frame
+        var sliderCenter = slider.center
+        sliderCenter.x = center.x
+        slider.center = sliderCenter
     }
     
     fileprivate func fixCoverFrame(originFrame: CGRect, upSpace: CGFloat) {
@@ -277,6 +282,10 @@ extension ZSegmentedControl {
         newFrame.size.height -= upSpace*2
         coverView.frame = newFrame
         coverViewMask.frame = coverView.frame
+        newFrame.origin.y = originFrame.size.height-2
+        newFrame.size.height = 2
+        slider.frame = newFrame
+        slider.backgroundColor = UIColor.red
     }
 }
 /// scrollViewDelegate
