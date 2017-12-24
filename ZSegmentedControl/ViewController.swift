@@ -11,25 +11,18 @@ import UIKit
 class ViewController: UIViewController {
 
     
+    @IBOutlet weak var button: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
         edgesForExtendedLayout = .init(rawValue: 0)
         view.backgroundColor = UIColor.gray
         
-        let width = view.frame.size.width
-        /// example - 0
-        let frame = CGRect(x: 0, y: 0, width: width, height: 40)
-        let titles = ["hello-world","one","two","three-apple","four","five-cats","six","seven","eight"]
-        
-        let segmentedControl = ZSegmentedControl(frame: frame)
-        segmentedControl.backgroundColor = UIColor.lightGray
-        segmentedControl.bounces = true
-        segmentedControl.setTitles(titles, fixedWidth: 80)
-        segmentedControl.textColor = UIColor.yellow
-        segmentedControl.textSelectedColor = UIColor.red
-//        segmentedControl.sliderColor = UIColor.green
-        view.addSubview(segmentedControl)
-        
+        button.setImage(#imageLiteral(resourceName: "p1"), for: .normal)
+        button.setImage(UIImage(), for: .selected)
     }
     
+    @IBAction func button(_ sender: UIButton) {
+        sender.isSelected = !sender.isSelected
+        sender.layoutSubviews()
+    }
 }

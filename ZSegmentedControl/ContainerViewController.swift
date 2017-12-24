@@ -31,7 +31,7 @@ class ContainerViewController: UIViewController {
         segmentedControl.textColor = UIColor.black
         segmentedControl.textSelectedColor = UIColor.red
 
-//        segmentedControl.moveDivision = true
+        segmentedControl.moveDivision = true
         
 //        segmentedControl.setCover(color: .green, upDowmSpace: 5, cornerRadius: 17)
         

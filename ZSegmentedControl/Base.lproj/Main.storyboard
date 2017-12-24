@@ -20,9 +20,29 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e2k-EA-cJB">
+                                <rect key="frame" x="164.5" y="318.5" width="46" height="30"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="B2D-di-pyR"/>
+                                </constraints>
+                                <state key="normal" title="Button"/>
+                                <connections>
+                                    <action selector="button:" destination="BYZ-38-t0r" eventType="touchUpInside" id="slH-Hy-Xk3"/>
+                                </connections>
+                            </button>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="e2k-EA-cJB" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="gaT-9v-oad"/>
+                            <constraint firstItem="e2k-EA-cJB" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="hF6-u7-zOk"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="ZSegmentedControl" id="hwW-Ta-gh0"/>
+                    <connections>
+                        <outlet property="button" destination="e2k-EA-cJB" id="2mL-Er-UCg"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
@@ -153,7 +173,7 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="TcS-e7-Wcu" kind="relationship" relationship="rootViewController" id="eL3-ij-X7y"/>
+                        <segue destination="TcS-e7-Wcu" kind="relationship" relationship="rootViewController" id="Kow-1j-GN1"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="v93-1A-ZLB" userLabel="First Responder" sceneMemberID="firstResponder"/>
