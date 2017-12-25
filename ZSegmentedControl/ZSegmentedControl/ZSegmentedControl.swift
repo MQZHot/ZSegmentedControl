@@ -107,8 +107,9 @@ class ZSegmentedControl: UIView {
     }
     
     /// cover
-    func setCover(color: UIColor, upDowmSpace: CGFloat = 0, cornerRadius: CGFloat = 0) {
+    func setCover(color: UIColor, upDowmSpace: CGFloat = 0, cornerRadius: CGFloat = 0, colorCut: Bool = false) {
         if color == .clear { return }
+        self.colorCut = colorCut
         coverView.layer.cornerRadius = cornerRadius
         coverView.backgroundColor = color
         coverUpDownSpace = upDowmSpace
@@ -129,7 +130,7 @@ class ZSegmentedControl: UIView {
         updateScrollViewOffset()
     }
     var delegate: ZSegmentedControlSelectedProtocol?
-    var moveDivision: Bool = false
+    fileprivate var colorCut: Bool = false
     /// private
     fileprivate var scrollView = UIScrollView()
     fileprivate var subScrollView = UIScrollView()
@@ -235,7 +236,7 @@ class ZSegmentedControl: UIView {
 extension ZSegmentedControl {
     fileprivate func updateScrollViewOffset() {
         if selectedItemsArray.count == 0 { return }
-        subScrollView.isHidden = !moveDivision
+        subScrollView.isHidden = !colorCut
         let index = min(max(selectedIndex, 0), selectedItemsArray.count)
         delegate?.segmentedControlSelectedIndex(index, animated: isTapItem, segmentedControl: self)
         let button = selectedItemsArray[index]
@@ -243,7 +244,7 @@ extension ZSegmentedControl {
         UIView.animate(withDuration: 0.3, animations: {
             self.fixCoverFrame(originFrame: button.frame, upSpace: self.coverUpDownSpace)
         }) { _ in
-            if !self.moveDivision {
+            if !self.colorCut {
                 self.itemsArray.forEach({ (button) in
                     button.setTitleColor(self.textColor, for: .normal)
                     button.isSelected = false
@@ -293,8 +294,7 @@ extension ZSegmentedControl {
         var sliderCenter = slider.center
         sliderCenter.x = center.x
         slider.center = sliderCenter
-        subScrollView.isHidden = !moveDivision
-        if !self.moveDivision && resourceType != .hybrid { /// not use cover
+        if !self.colorCut {
             let currentColor = averageColor(fromColor: textSelectedColor, toColor: textColor, percent: abs(percent))
             let targetColor = averageColor(fromColor: textColor, toColor: textSelectedColor, percent: abs(percent))
             let currentButton = self.itemsArray[selectedIndex]
