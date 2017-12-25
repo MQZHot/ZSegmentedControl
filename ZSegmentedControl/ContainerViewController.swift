@@ -21,7 +21,7 @@ class ContainerViewController: UIViewController {
         let width = view.frame.size.width
         /// example - 0
         let frame = CGRect(x: 0, y: 0, width: width, height: 40)
-        let titles = ["hello-world","one","three-apple","four","five-cats","six","seven","eight"]
+        let titles = ["新闻头条","国际要闻","体育","中国足球","汽车","囧途旅行","幽默搞笑","视频"]
         segmentedControl = ZSegmentedControl(frame: frame)
         segmentedControl.delegate = self
         segmentedControl.backgroundColor = UIColor.lightGray
@@ -32,7 +32,7 @@ class ContainerViewController: UIViewController {
         segmentedControl.textSelectedColor = UIColor.red
 //        segmentedControl.selectedScale = 1.2
         
-        segmentedControl.setCover(color: .green)
+        segmentedControl.setCover(color: .green, upDowmSpace: 6, cornerRadius: 14)
 //        segmentedControl.sliderAnimated = false
         segmentedControl.setSilder(backgroundColor: .blue, position: .topWidthHeight(4), widthStyle: .fixedWidth(20))
         
@@ -66,7 +66,7 @@ extension ContainerViewController: ZSegmentedControlSelectedProtocol {
 extension ContainerViewController: UIScrollViewDelegate {
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         let index = Int(scrollView.contentOffset.x / scrollView.frame.size.width)
-//        segmentedControl.selectedIndex = index
+        segmentedControl.selectedIndex = index
     }
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         scrollViewDidEndScrollingAnimation(scrollView)

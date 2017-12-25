@@ -151,7 +151,7 @@ class ZSegmentedControl: UIView {
     fileprivate var imageSources: ([UIImage], [UIImage]) = ([], [])
     fileprivate var hybridSources: ([String?], [UIImage?], [UIImage?]) = ([], [], [])
     fileprivate var resourceType: ResourceType = .text
-    fileprivate var isTapItem: Bool = false
+    fileprivate var oldSelectIndex: Int = 0
     fileprivate var coverUpDownSpace: CGFloat = 0
     fileprivate var slider = UIView()
     fileprivate var sliderConfig: (SliderPositionStyle, WidthStyle)?
@@ -207,21 +207,22 @@ class ZSegmentedControl: UIView {
         }
         scrollView.contentSize = CGSize(width: contentSizeWidth, height: 0)
         let index = min(max(selectedIndex, 0), itemsArray.count-1)
+        oldSelectIndex = index
         let selectedButton = itemsArray[index]
         selectedButton.isSelected = true
         fixCoverAndSliderFrame(originFrame: selectedButton.frame, upSpace: coverUpDownSpace)
     }
     @objc private func selectedButton(sender: UIButton) {
-        isTapItem = true
         selectedIndex = sender.tag
-        scrollView.isUserInteractionEnabled = false
     }
 }
 extension ZSegmentedControl {
     fileprivate func updateScrollViewOffset() {
+        
         if itemsArray.count == 0 { return }
+        
         let index = min(max(selectedIndex, 0), itemsArray.count)
-        delegate?.segmentedControlSelectedIndex(index, animated: isTapItem, segmentedControl: self)
+        delegate?.segmentedControlSelectedIndex(index, animated: true, segmentedControl: self)
         let currentButton = self.itemsArray[index]
         let offset = getScrollViewCorrectOffset(by: currentButton)
         let duration = sliderAnimated ? 0.3 : 0
@@ -238,8 +239,7 @@ extension ZSegmentedControl {
             currentButton.transform = CGAffineTransform(scaleX: scale, y: scale)
             self.scrollView.setContentOffset(offset, animated: true)
         }) { _ in
-            self.isTapItem = false
-            self.scrollView.isUserInteractionEnabled = true
+            self.oldSelectIndex = self.selectedIndex
         }
     }
     
@@ -256,19 +256,21 @@ extension ZSegmentedControl {
     }
     
     fileprivate func updateTackingOffset() {
-        if isTapItem { return }
+        print(Int(sliderTackingScale),oldSelectIndex, selectedIndex)
+        if Int(oldSelectIndex)==selectedIndex {
+            return
+        }
         if !sliderAnimated { return }
-        
-        let percent = sliderTackingScale-floor(sliderTackingScale)
+        let percent = sliderTackingScale-CGFloat(Int(sliderTackingScale))
         let currentIndex = Int(sliderTackingScale)
         var targetIndex = currentIndex
-        if percent < 0 {
+        if percent < 0 && currentIndex > 0 {
             targetIndex = currentIndex-1
-        } else if percent > 0 {
+        } else if percent > 0 && currentIndex < itemsArray.count-1 {
             targetIndex = currentIndex+1
+        } else {
+            return
         }
-        print(currentIndex, targetIndex)
-        if targetIndex < 0 || targetIndex > itemsArray.count-1 { return }
         let currentButton = itemsArray[currentIndex]
         let targentButton = itemsArray[targetIndex]
         let centerXChange = (targentButton.center.x-currentButton.center.x)*abs(percent)
