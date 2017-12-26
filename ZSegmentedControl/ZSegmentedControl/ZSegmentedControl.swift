@@ -164,7 +164,7 @@ public class ZSegmentedControl: UIView {
     fileprivate var coverUpDownSpace: CGFloat = 0
     fileprivate var sliderConfig: (SliderPositionStyle, WidthStyle)?
     fileprivate var contentScrollViewWillDragging: Bool = false
-    
+    fileprivate var isTapItem: Bool = false
     enum ResourceType {
         case text
         case image
@@ -268,6 +268,7 @@ extension ZSegmentedControl {
     }
     @objc private func selectedButton(sender: UIButton) {
         contentScrollViewWillDragging = false
+        isTapItem = true
         selectedIndex = sender.tag
     }
 }
@@ -276,16 +277,17 @@ extension ZSegmentedControl {
     fileprivate func updateScrollViewOffset() {
         if itemsArray.count == 0 { return }
         let index = min(max(selectedIndex, 0), itemsArray.count-1)
-        delegate?.segmentedControlSelectedIndex(index, animated: true, segmentedControl: self)
+        delegate?.segmentedControlSelectedIndex(index, animated: isTapItem, segmentedControl: self)
+        isTapItem = false
         let currentButton = self.itemsArray[index]
         let offset = getScrollViewCorrectOffset(by: currentButton)
         UIView.animate(withDuration: 0.3, animations: {
-            self.updateCoverAndSliderFrame(originFrame: currentButton.frame, upSpace: self.coverUpDownSpace)
             self.itemsArray.forEach({ (button) in
                 button.setTitleColor(self.textColor, for: .normal)
                 button.isSelected = false
                 button.transform = CGAffineTransform(scaleX: 1, y: 1)
             })
+            self.updateCoverAndSliderFrame(originFrame: currentButton.frame, upSpace: self.coverUpDownSpace)
             currentButton.setTitleColor(self.textSelectedColor, for: .normal)
             currentButton.isSelected = true
             let scale = self.selectedScale
@@ -321,6 +323,9 @@ extension ZSegmentedControl {
         }
         let currentButton = itemsArray[currentIndex]
         let targentButton = itemsArray[targetIndex]
+        currentButton.transform = CGAffineTransform(scaleX: 1, y: 1)
+        targentButton.transform = CGAffineTransform(scaleX: 1, y: 1)
+        
         let centerXChange = (targentButton.center.x-currentButton.center.x)*abs(percent)
         let widthChange = (targentButton.frame.size.width-currentButton.frame.size.width)*abs(percent)
         var frame = currentButton.frame
