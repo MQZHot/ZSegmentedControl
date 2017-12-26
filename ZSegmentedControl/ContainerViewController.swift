@@ -12,6 +12,9 @@ class ContainerViewController: UIViewController {
 
     @IBOutlet weak var scrollView: UIScrollView!
 
+    @IBAction func ssss(_ sender: UIBarButtonItem) {
+        self.navigationController?.pushViewController(UIViewController(), animated: true)
+    }
     var segmentedControl: ZSegmentedControl!
     
     override func viewDidLoad() {
@@ -26,7 +29,7 @@ class ContainerViewController: UIViewController {
         segmentedControl.delegate = self
         segmentedControl.backgroundColor = UIColor.lightGray
         segmentedControl.bounces = true
-        segmentedControl.selectedIndex = 2
+        segmentedControl.selectedIndex = 4
         
         segmentedControl.textColor = UIColor.black
         segmentedControl.textSelectedColor = UIColor.red
@@ -59,7 +62,7 @@ extension ContainerViewController: ZSegmentedControlSelectedProtocol {
         let offsetX = CGFloat(index)*scrollView.frame.size.width
         let offsetY = scrollView.contentOffset.y
         let offset = CGPoint(x: offsetX, y: offsetY)
-        scrollView.setContentOffset(offset, animated: animated)
+        scrollView.setContentOffset(offset, animated: false)
     }
 }
 
@@ -72,7 +75,9 @@ extension ContainerViewController: UIScrollViewDelegate {
         scrollViewDidEndScrollingAnimation(scrollView)
     }
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let index = scrollView.contentOffset.x / scrollView.frame.size.width
-        segmentedControl.sliderTackingScale = index
+        segmentedControl.contentScrollViewDidScroll(scrollView)
+    }
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        segmentedControl.contentScrollViewWillBeginDragging()
     }
 }

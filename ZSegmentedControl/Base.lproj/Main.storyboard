@@ -127,7 +127,7 @@
             </objects>
             <point key="canvasLocation" x="457" y="784"/>
         </scene>
-        <!--Container View Controller-->
+        <!--Title-->
         <scene sceneID="cs2-Bu-JIg">
             <objects>
                 <viewController id="ZMU-SV-hko" customClass="ContainerViewController" customModule="ZSegmentedControl" customModuleProvider="target" sceneMemberID="viewController">
@@ -154,6 +154,13 @@
                             <constraint firstItem="Uzj-2M-vxU" firstAttribute="leading" secondItem="dAY-HD-CpG" secondAttribute="leading" id="oIk-kX-rS3"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" title="Title" id="DpA-xH-g1T">
+                        <barButtonItem key="rightBarButtonItem" title="Item" id="Fiu-Xg-K2R">
+                            <connections>
+                                <action selector="ssss:" destination="ZMU-SV-hko" id="RR0-Df-Xlw"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="scrollView" destination="Uzj-2M-vxU" id="mW8-Rt-Ghy"/>
                     </connections>
