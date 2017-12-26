@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+/// both image & text style
 public enum HybridStyle {
     case normalWithSpace(CGFloat)
     case imageTopWithSpace(CGFloat)
@@ -23,7 +23,7 @@ public enum WidthStyle {
     case fixedWidth(CGFloat)
     case adaptiveSpace(CGFloat)
 }
-/// 点击
+
 public protocol ZSegmentedControlSelectedProtocol {
     func segmentedControlSelectedIndex(_ index: Int, animated: Bool, segmentedControl: ZSegmentedControl)
 }
