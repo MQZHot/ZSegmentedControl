@@ -8,6 +8,21 @@ Customizable segmented control, a UISwitch-like segmented control and Segmented 
 
 ## How To Use
 
+```swift
+/// default `false`. if `true`, bounces past edge of content and back again
+var bounces: Bool = false
+/// selected index, default `0`
+var selectedIndex: Int = 0
+/// selectedScale, default `1.0`
+var selectedScale: CGFloat = 1.0
+/// textColor
+var textColor: UIColor = UIColor.gray
+/// selected textColor
+var textSelectedColor: UIColor = UIColor.blue
+/// textFont
+var textFont: UIFont = UIFont.systemFont(ofSize: 15)
+```
+
 ### set image / text
 ```swift
 /// only text
@@ -64,16 +79,6 @@ func setSilder(backgroundColor: UIColor,position: SliderPositionStyle, widthStyl
 func contentScrollViewDidScroll(_ scrollView: UIScrollView)
 /// use in contentScroll `scrollViewWillBeginDragging`
 func contentScrollViewWillBeginDragging()
-```
-
-
-```swift
-/// default `false`. if `true`, bounces past edge of content and back again
-var bounces: Bool = false
-/// selected index, default `0`
-var selectedIndex: Int = 0
-/// selectedScale, default `1.0`
-var selectedScale: CGFloat = 1.0
 ```
 
 ## Contact
