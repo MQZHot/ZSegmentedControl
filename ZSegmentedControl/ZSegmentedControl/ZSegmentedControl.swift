@@ -10,7 +10,6 @@ import UIKit
 
 public enum HybridStyle {
     case normalWithSpace(CGFloat)
-    case imageRightWithSpace(CGFloat)
     case imageTopWithSpace(CGFloat)
     case imageBottomWithSpace(CGFloat)
 }
@@ -63,23 +62,17 @@ public class ZSegmentedControl: UIView {
     public func setImages(_ images: [UIImage], selectedImages: [UIImage?]? = nil, fixedWidth: CGFloat) {
         setImageItems(images: images, selectedImages: selectedImages, fixedWidth: fixedWidth)
     }
+    
+    /// both text image
+    ///
+    /// - Parameters:
+    ///   - titles: title group
+    ///   - images: image group
+    ///   - selectedImages: selected image group
+    ///   - style: image potision
+    ///   - fixedWidth: The width is fixed
     public func setHybridResource(_ titles: [String?], images: [UIImage?], selectedImages: [UIImage?]? = nil, style: HybridStyle = .normalWithSpace(0), fixedWidth: CGFloat) {
-        resourceType = .hybrid
-        totalItemsCount = max(titles.count, images.count)
-        var _titles = [String?]()
-        var _images = [UIImage?]()
-        var _sImages = [UIImage?]()
-        let sTempImages = selectedImages == nil ? images : selectedImages!
-        for i in 0..<totalItemsCount {
-            let title = i<titles.count ? titles[i] : nil
-            let image = i<images.count && images[i] != nil ? images[i] : UIImage()
-            let sImage = i<sTempImages.count && sTempImages[i] != nil ? sTempImages[i] : UIImage()
-            _titles.append(title)
-            _images.append(image)
-            _sImages.append(sImage)
-        }
-        hybridSources = (_titles, _images, _sImages)
-        setupItems(fixedWidth: fixedWidth)
+        setHybridItems(titles, images: images,selectedImages:selectedImages,style:style, fixedWidth: fixedWidth)
     }
 // MARK: - text
     /// textColor
@@ -146,6 +139,16 @@ public class ZSegmentedControl: UIView {
     ///   - position: Deciding on the slider position up or down, an enumeration
     ///   - widthStyle: The width of the slider is an enumeration, fixed width or adaptive
     public func setSilder(backgroundColor: UIColor,position: SliderPositionStyle, widthStyle: WidthStyle) {
+        var sliderFrame = slider.frame
+        switch position {
+        case .bottomWithHight(let height):
+            sliderFrame.origin.y = frame.size.height-height
+            sliderFrame.size.height = height
+        case .topWidthHeight(let height):
+            sliderFrame.origin.y = 0
+            sliderFrame.size.height = height
+        }
+        slider.frame = sliderFrame
         slider.isHidden = false
         slider.backgroundColor = backgroundColor
         sliderConfig = (position, widthStyle)
@@ -160,9 +163,10 @@ public class ZSegmentedControl: UIView {
     fileprivate var titleSources = [String]()
     fileprivate var imageSources: ([UIImage], [UIImage]) = ([], [])
     fileprivate var hybridSources: ([String?], [UIImage?], [UIImage?]) = ([], [], [])
+    fileprivate var hybridStyle: HybridStyle = .normalWithSpace(0)
     fileprivate var resourceType: ResourceType = .text
     fileprivate var coverUpDownSpace: CGFloat = 0
-    fileprivate var sliderConfig: (SliderPositionStyle, WidthStyle)?
+    fileprivate var sliderConfig: (SliderPositionStyle, WidthStyle) = (.bottomWithHight(2),.adaptiveSpace(0))
     fileprivate var contentScrollViewWillDragging: Bool = false
     fileprivate var isTapItem: Bool = false
     enum ResourceType {
@@ -206,6 +210,25 @@ public class ZSegmentedControl: UIView {
         }
         imageSources = (images, sImages)
         totalItemsCount = images.count
+        setupItems(fixedWidth: fixedWidth)
+    }
+    private func setHybridItems(_ titles: [String?], images: [UIImage?], selectedImages: [UIImage?]? = nil, style: HybridStyle = .normalWithSpace(0), fixedWidth: CGFloat) {
+        resourceType = .hybrid
+        hybridStyle = style
+        totalItemsCount = max(titles.count, images.count)
+        var _titles = [String?]()
+        var _images = [UIImage?]()
+        var _sImages = [UIImage?]()
+        let sTempImages = selectedImages == nil ? images : selectedImages!
+        for i in 0..<totalItemsCount {
+            let title = i<titles.count ? titles[i] : nil
+            let image = i<images.count && images[i] != nil ? images[i] : UIImage()
+            let sImage = i<sTempImages.count && sTempImages[i] != nil ? sTempImages[i] : image
+            _titles.append(title)
+            _images.append(image)
+            _sImages.append(sImage)
+        }
+        hybridSources = (_titles, _images, _sImages)
         setupItems(fixedWidth: fixedWidth)
     }
 }
@@ -254,9 +277,32 @@ extension ZSegmentedControl {
             case .hybrid:
                 button.setTitleColor(textColor, for: .normal)
                 button.titleLabel?.font = textFont
-                button.setTitle(hybridSources.0[i], for: .normal)
-                button.setImage(hybridSources.1[i], for: .normal)
+                let text = hybridSources.0[i]
+                let image = hybridSources.1[i]
+                button.setTitle(text, for: .normal)
+                button.setImage(image, for: .normal)
                 button.setImage(hybridSources.2[i], for: .selected)
+                switch hybridStyle {
+                case .normalWithSpace(let space):
+                    if text == nil || image == nil { break }
+                    let distance = space/2
+                    button.imageEdgeInsets = UIEdgeInsetsMake(0, -distance, 0, distance)
+                    button.titleEdgeInsets = UIEdgeInsetsMake(0, distance, 0, -distance)
+                case .imageTopWithSpace(let space):
+                    if text == nil || image == nil { break }
+                    let distance = space/2
+                    let titleWidth = text?.size(withAttributes: [.font: textFont]).width ?? 0
+                    let titleHeight = text?.size(withAttributes: [.font: textFont]).height ?? 0
+                    button.imageEdgeInsets = UIEdgeInsetsMake(-titleHeight-distance, 0, 0, -titleWidth)
+                    button.titleEdgeInsets = UIEdgeInsetsMake(0, -image!.size.width, -image!.size.height-distance, 0)
+                case .imageBottomWithSpace(let space):
+                    if text == nil || image == nil { break }
+                    let distance = space/2
+                    let titleWidth = text?.size(withAttributes: [.font: textFont]).width ?? 0
+                    let titleHeight = text?.size(withAttributes: [.font: textFont]).height ?? 0
+                    button.imageEdgeInsets = UIEdgeInsetsMake(0, 0, -titleHeight-distance, -titleWidth)
+                    button.titleEdgeInsets = UIEdgeInsetsMake(-image!.size.height-distance, -image!.size.width, 0, 0)
+                }
             }
             contentSizeWidth += width
         }
@@ -278,10 +324,13 @@ extension ZSegmentedControl {
         if itemsArray.count == 0 { return }
         let index = min(max(selectedIndex, 0), itemsArray.count-1)
         delegate?.segmentedControlSelectedIndex(index, animated: isTapItem, segmentedControl: self)
-        isTapItem = false
+        
         let currentButton = self.itemsArray[index]
         let offset = getScrollViewCorrectOffset(by: currentButton)
-        UIView.animate(withDuration: 0.3, animations: {
+        let duration = isTapItem || contentScrollViewWillDragging
+            ? 0.3 : 0
+        isTapItem = false
+        UIView.animate(withDuration: duration, animations: {
             self.itemsArray.forEach({ (button) in
                 button.setTitleColor(self.textColor, for: .normal)
                 button.isSelected = false
@@ -292,10 +341,14 @@ extension ZSegmentedControl {
             currentButton.isSelected = true
             let scale = self.selectedScale
             currentButton.transform = CGAffineTransform(scaleX: scale, y: scale)
-            self.scrollView.setContentOffset(offset, animated: true)
+            let animated = duration == 0 ? false:true
+            self.scrollView.setContentOffset(offset, animated: animated)
         })
     }
     fileprivate func getScrollViewCorrectOffset(by item: UIButton) -> CGPoint {
+        if scrollView.contentSize.width < scrollView.frame.size.width {
+            return CGPoint.zero
+        }
         var offsetx = item.center.x - frame.size.width/2
         let offsetMax = scrollView.contentSize.width - frame.size.width
         if offsetx < 0 {
@@ -358,8 +411,7 @@ extension ZSegmentedControl {
         newFrame.size.height -= upSpace*2
         coverView.frame = newFrame
         
-        guard let config = sliderConfig else { return }
-        switch config.0 {
+        switch sliderConfig.0 {
         case .topWidthHeight(let height):
             newFrame.origin.y = 0
             newFrame.size.height = height
@@ -367,7 +419,7 @@ extension ZSegmentedControl {
             newFrame.origin.y = originFrame.size.height-height
             newFrame.size.height = height
         }
-        switch config.1 {
+        switch sliderConfig.1 {
         case .fixedWidth(let width):
             newFrame.size.width = width
         case .adaptiveSpace(let space):

@@ -13,7 +13,6 @@
 		D621ADD01FD7B3CE0059E888 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D621ADCF1FD7B3CE0059E888 /* Assets.xcassets */; };
 		D621ADD31FD7B3CE0059E888 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D621ADD11FD7B3CE0059E888 /* LaunchScreen.storyboard */; };
 		D621ADDD1FD7B4030059E888 /* ZSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = D621ADDC1FD7B4030059E888 /* ZSegmentedControl.swift */; };
-		D64647731FDA5EC3009FA83F /* ContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64647721FDA5EC3009FA83F /* ContainerViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,7 +24,6 @@
 		D621ADD21FD7B3CE0059E888 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D621ADD41FD7B3CE0059E888 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D621ADDC1FD7B4030059E888 /* ZSegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSegmentedControl.swift; sourceTree = "<group>"; };
-		D64647721FDA5EC3009FA83F /* ContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,7 +59,6 @@
 				D621ADDB1FD7B3EC0059E888 /* ZSegmentedControl */,
 				D621ADC81FD7B3CE0059E888 /* AppDelegate.swift */,
 				D621ADCA1FD7B3CE0059E888 /* ViewController.swift */,
-				D64647721FDA5EC3009FA83F /* ContainerViewController.swift */,
 				D621ADCC1FD7B3CE0059E888 /* Main.storyboard */,
 				D621ADCF1FD7B3CE0059E888 /* Assets.xcassets */,
 				D621ADD11FD7B3CE0059E888 /* LaunchScreen.storyboard */,
@@ -152,7 +149,6 @@
 			files = (
 				D621ADDD1FD7B4030059E888 /* ZSegmentedControl.swift in Sources */,
 				D621ADCB1FD7B3CE0059E888 /* ViewController.swift in Sources */,
-				D64647731FDA5EC3009FA83F /* ContainerViewController.swift in Sources */,
 				D621ADC91FD7B3CE0059E888 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
