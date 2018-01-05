@@ -20,6 +20,8 @@ class ViewController: UIViewController {
         
         let width = UIScreen.main.bounds.size.width
         
+        
+        //
         /// example - 00
         let segmentedControl = ZSegmentedControl(frame: CGRect(x: 0, y: 0, width: 160, height: 30))
         segmentedControl.backgroundColor = UIColor.red
