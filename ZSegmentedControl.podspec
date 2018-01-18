@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
 s.name         = "ZSegmentedControl"                              
-s.version      = "0.0.1"                                   
+s.version      = "0.0.2"                                   
 s.summary      = "Customizable segmented control, a UISwitch-like segmented control and Segmented pager written in Swift "
 s.homepage     = "https://github.com/MQZHot/ZSegmentedControl"
 s.author       = { "mqz" => "mqz1228@163.com" }     
