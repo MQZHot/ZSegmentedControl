@@ -174,7 +174,7 @@ public class ZSegmentedControl: UIView {
         case image
         case hybrid
     }
-    override init(frame: CGRect) {
+    override public init(frame: CGRect) {
         super.init(frame: frame)
         setupContentView()
     }
