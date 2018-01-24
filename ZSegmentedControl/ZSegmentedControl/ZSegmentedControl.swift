@@ -24,7 +24,7 @@ public enum WidthStyle {
     case adaptiveSpace(CGFloat)
 }
 
-public protocol ZSegmentedControlSelectedProtocol {
+public protocol ZSegmentedControlSelectedProtocol: class {
     func segmentedControlSelectedIndex(_ index: Int, animated: Bool, segmentedControl: ZSegmentedControl)
 }
 
@@ -41,7 +41,7 @@ public class ZSegmentedControl: UIView {
     /// selectedScale, default `1.0`
     public var selectedScale: CGFloat = 1.0
     /// delegate
-    public var delegate: ZSegmentedControlSelectedProtocol?
+    public weak var delegate: ZSegmentedControlSelectedProtocol?
     
 // MARK: - set items
     /// only text
